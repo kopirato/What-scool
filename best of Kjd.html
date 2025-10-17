@@ -1,179 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kajiado360 Tourism Explorer</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Smart Story Dice 🎲</title>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f5f6fa;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #006400;
-      color: white;
-      text-align: center;
-      padding: 1rem 0;
-      font-size: 1.5rem;
-      letter-spacing: 1px;
-    }
-    main {
-      max-width: 900px;
-      margin: 20px auto;
-      background: white;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #2c3e50;
-      margin-top: 30px;
-    }
-    form {
-      margin-top: 15px;
-      display: grid;
-      gap: 10px;
-    }
-    input, textarea, select, button {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      width: 100%;
-    }
-    button {
-      background: #006400;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #228B22;
-    }
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 15px;
-      margin-top: 15px;
-      background: #fafafa;
-    }
-    .review {
-      margin-left: 15px;
-      font-size: 0.95rem;
-      border-left: 3px solid #006400;
-      padding-left: 8px;
-    }
+    body{font-family:Poppins,Arial,sans-serif;margin:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#aee1f9,#fef6e4);}
+    .card{background:white;padding:24px;border-radius:16px;max-width:500px;box-shadow:0 6px 12px rgba(0,0,0,0.1);text-align:center}
+    h1{margin:0 0 10px;font-size:28px}
+    button{background:#ff7b54;color:white;border:none;padding:10px 16px;font-size:16px;border-radius:10px;cursor:pointer;margin-top:10px}
+    button:hover{background:#ff956f}
+    .story{margin-top:20px;line-height:1.5;font-size:17px;color:#333}
+    footer{margin-top:30px;font-size:12px;color:#555}
   </style>
 </head>
 <body>
-  <header>🌍 Kajiado360 Tourism Explorer</header>
-  <main>
-    <h2>Add a New Tourist Site</h2>
-    <form id="siteForm">
-      <input type="text" id="name" placeholder="Site Name" required>
-      <input type="text" id="location" placeholder="Location" required>
-      <textarea id="description" placeholder="Description"></textarea>
-      <input type="text" id="category" placeholder="Category (Wildlife, Culture, etc.)">
-      <input type="url" id="photo_url" placeholder="Photo URL (optional)">
-      <button type="submit">Add Site</button>
-    </form>
-
-    <h2>Add a Review</h2>
-    <form id="reviewForm">
-      <select id="siteSelect" required></select>
-      <input type="text" id="visitor_name" placeholder="Your Name" required>
-      <input type="number" id="rating" min="1" max="5" placeholder="Rating (1-5)" required>
-      <textarea id="comment" placeholder="Your Comment" required></textarea>
-      <button type="submit">Add Review</button>
-    </form>
-
-    <h2>Tourist Sites</h2>
-    <div id="siteList"></div>
-  </main>
+  <div class="card">
+    <h1>🎲 Smart Story Dice</h1>
+    <p>Roll to make your own mini-story!</p>
+    <button id="roll">🎲 Roll Story Dice</button>
+    <div class="story" id="story"></div>
+  </div>
+  <footer>Runs fully offline — built by Selian’s team ✨</footer>
 
   <script>
-    const sites = JSON.parse(localStorage.getItem("sites")) || [];
-    const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+    const characters = [
+      "a brave rabbit", "a curious monkey", "a shy elephant",
+      "a talking cupcake", "a tiny robot", "a magical giraffe"
+    ];
+    const settings = [
+      "in a forest made of candy", "on the moon", "under the sea",
+      "in a floating castle", "at a jungle school", "inside a giant book"
+    ];
+    const goals = [
+      "wants to learn to dance", "searches for lost laughter",
+      "tries to bake the biggest cake", "learns to make new friends",
+      "builds a flying car", "wants to share kindness"
+    ];
+    const endings = [
+      "and everyone clapped happily ever after!",
+      "and that day became their best memory.",
+      "and they learned that courage can be small and mighty.",
+      "and the stars twinkled proudly above them.",
+      "and from that day, they always believed in magic."
+    ];
 
-    const siteForm = document.getElementById("siteForm");
-    const reviewForm = document.getElementById("reviewForm");
-    const siteList = document.getElementById("siteList");
-    const siteSelect = document.getElementById("siteSelect");
+    document.getElementById('roll').addEventListener('click', ()=>{
+      const hero = random(characters);
+      const place = random(settings);
+      const goal = random(goals);
+      const end = random(endings);
 
-    // Display all sites and their reviews
-    function renderSites() {
-      siteList.innerHTML = "";
-      siteSelect.innerHTML = "<option value=''>Select a site</option>";
-
-      sites.forEach((site, index) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <h3>${site.name}</h3>
-          <p><strong>Location:</strong> ${site.location}</p>
-          <p>${site.description}</p>
-          <p><em>Category:</em> ${site.category}</p>
-          ${site.photo_url ? `<img src="${site.photo_url}" width="100%" style="border-radius:10px;">` : ""}
-          <h4>Reviews:</h4>
-        `;
-        const siteReviews = reviews.filter(r => r.site_id === index);
-        if (siteReviews.length === 0) {
-          card.innerHTML += `<p class='review'>No reviews yet.</p>`;
-        } else {
-          siteReviews.forEach(r => {
-            card.innerHTML += `
-              <div class="review">
-                <strong>${r.visitor_name}</strong> ⭐${r.rating}<br>
-                ${r.comment}
-              </div>
-            `;
-          });
-        }
-        siteList.appendChild(card);
-
-        // Add to select dropdown
-        const opt = document.createElement("option");
-        opt.value = index;
-        opt.textContent = site.name;
-        siteSelect.appendChild(opt);
-      });
-    }
-
-    // Add new site
-    siteForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const newSite = {
-        name: document.getElementById("name").value,
-        location: document.getElementById("location").value,
-        description: document.getElementById("description").value,
-        category: document.getElementById("category").value,
-        photo_url: document.getElementById("photo_url").value
-      };
-      sites.push(newSite);
-      localStorage.setItem("sites", JSON.stringify(sites));
-      siteForm.reset();
-      renderSites();
+      const story = `Once upon a time, ${hero} lived ${place}. One day, ${hero.split(' ')[1]} ${goal}. 
+      It wasn’t easy, but ${hero.split(' ')[1]} never gave up, ${end}`;
+      document.getElementById('story').textContent = story;
     });
 
-    // Add new review
-    reviewForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const newReview = {
-        site_id: parseInt(document.getElementById("siteSelect").value),
-        visitor_name: document.getElementById("visitor_name").value,
-        rating: parseInt(document.getElementById("rating").value),
-        comment: document.getElementById("comment").value
-      };
-      reviews.push(newReview);
-      localStorage.setItem("reviews", JSON.stringify(reviews));
-      reviewForm.reset();
-      renderSites();
-    });
-
-    renderSites();
+    function random(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
   </script>
 </body>
 </html>
